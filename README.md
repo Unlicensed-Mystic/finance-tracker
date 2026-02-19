@@ -105,16 +105,4 @@ The app uses local state by default (seeded with sample data). To switch to Fire
 | Quick Stats          | Savings rate, top categories, averages              |
 | Dark / Light Mode    | System-aware, persisted in localStorage             |
 
----
 
-## Marks Alignment
-
-| Criteria                  | Implementation                              |
-|---------------------------|---------------------------------------------|
-| UI Design (20)            | CSS Modules, custom theme, animations       |
-| Features & Functionality (25) | Full CRUD, dashboard logic, charts     |
-| React Code Structure (15) | Pages, components, hooks, context split     |
-| Firebase Usage (15)       | Config ready, Firestore hooks commented in  |
-| User Experience (10)      | Toast feedback, delete confirm, empty states|
-| Creativity / Uniqueness (10) | Dark mode, pie chart, gradient cards    |
-| Deployment (5)            | Vite build, deployable to Vercel/Netlify    |

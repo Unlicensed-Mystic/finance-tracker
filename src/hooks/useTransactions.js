@@ -19,7 +19,7 @@ export function useTransactions() {
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState(null)
 
-  // ── Real-time Firestore listener ───────────────────────────
+  // ── Real-time Firestore listener 
   useEffect(() => {
     if (!user) {
       setTransactions([])
