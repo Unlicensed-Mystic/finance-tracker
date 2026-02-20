@@ -43,7 +43,13 @@ export default function Navbar() {
         <div className={styles.logoIcon}>
           <Icon name="wallet" size={16} />
         </div>
-        <span className={styles.logoText}>FinTrack</span>
+        <span className={styles.logoText}>
+          {'FinTrack'.split('').map((char, i) => (
+            <span key={i} className={styles.logoLetter} style={{ animationDelay: `${i * 0.06}s` }}>
+              {char}
+            </span>
+          ))}
+        </span>
       </div>
 
       {/* Nav links */}
