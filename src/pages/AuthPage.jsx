@@ -60,29 +60,6 @@ export default function AuthPage() {
         {/* Animated grid background */}
         <div className={styles.grid} aria-hidden="true" />
 
-        {/* Floating stat cards */}
-        <div className={styles.floatCard} style={{ top: '18%', left: '8%', animationDelay: '0s' }}>
-          <span className={styles.floatIcon}>💰</span>
-          <div>
-            <p className={styles.floatVal}>₹68,700</p>
-            <p className={styles.floatLabel}>This month's income</p>
-          </div>
-        </div>
-        <div className={styles.floatCard} style={{ top: '42%', right: '6%', animationDelay: '0.6s' }}>
-          <span className={styles.floatIcon}>📉</span>
-          <div>
-            <p className={styles.floatVal} style={{ color: '#F43F5E' }}>₹24,397</p>
-            <p className={styles.floatLabel}>Total expenses</p>
-          </div>
-        </div>
-        <div className={styles.floatCard} style={{ bottom: '22%', left: '10%', animationDelay: '1.2s' }}>
-          <span className={styles.floatIcon}>📈</span>
-          <div>
-            <p className={styles.floatVal} style={{ color: '#10B981' }}>64.5%</p>
-            <p className={styles.floatLabel}>Savings rate</p>
-          </div>
-        </div>
-
         {/* Central content */}
         <div className={styles.leftContent}>
           <div className={styles.brandMark}>
