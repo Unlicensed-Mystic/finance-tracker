@@ -3,6 +3,13 @@ import { useAuth } from '../context/AuthContext'
 import Icon from '../components/Icon'
 import styles from './AuthPage.module.css'
 
+const FEATURES = [
+  { icon: '📊', text: 'Visual spending breakdowns' },
+  { icon: '🔒', text: 'Secure Firebase storage' },
+  { icon: '⚡', text: 'Real-time sync across devices' },
+  { icon: '🌙', text: 'Dark & light mode' },
+]
+
 export default function AuthPage() {
   const { login, signup } = useAuth()
 
@@ -10,6 +17,7 @@ export default function AuthPage() {
   const [name, setName]         = useState('')
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
+  const [showPass, setShowPass] = useState(false)
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
 
@@ -20,7 +28,6 @@ export default function AuthPage() {
 
     setError('')
     setLoading(true)
-
     try {
       if (mode === 'login') {
         await login(email, password)
@@ -33,7 +40,7 @@ export default function AuthPage() {
         'auth/wrong-password':       'Incorrect password.',
         'auth/email-already-in-use': 'An account with this email already exists.',
         'auth/invalid-email':        'Please enter a valid email address.',
-        'auth/too-many-requests':    'Too many attempts. Please try again later.',
+        'auth/too-many-requests':    'Too many attempts. Try again later.',
         'auth/invalid-credential':   'Invalid email or password.',
       }
       setError(msgs[err.code] || 'Something went wrong. Please try again.')
@@ -42,113 +49,197 @@ export default function AuthPage() {
     }
   }
 
-  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSubmit() }
-
-  const switchMode = (newMode) => {
-    setMode(newMode)
-    setError('')
-    setName('')
-    setEmail('')
-    setPassword('')
-  }
+  const switchMode = (m) => { setMode(m); setError(''); setName(''); setEmail(''); setPassword('') }
+  const onKey = (e) => { if (e.key === 'Enter') handleSubmit() }
 
   return (
     <div className={styles.page}>
-      <div className={styles.blob1} aria-hidden="true" />
-      <div className={styles.blob2} aria-hidden="true" />
 
-      <div className={styles.card}>
-        {/* Logo */}
-        <div className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <Icon name="wallet" size={20} />
+      {/* ── Left panel ── */}
+      <div className={styles.left}>
+        {/* Animated grid background */}
+        <div className={styles.grid} aria-hidden="true" />
+
+        {/* Floating stat cards */}
+        <div className={styles.floatCard} style={{ top: '18%', left: '8%', animationDelay: '0s' }}>
+          <span className={styles.floatIcon}>💰</span>
+          <div>
+            <p className={styles.floatVal}>₹68,700</p>
+            <p className={styles.floatLabel}>This month's income</p>
           </div>
-          <span className={styles.logoText}>FinTrack</span>
+        </div>
+        <div className={styles.floatCard} style={{ top: '42%', right: '6%', animationDelay: '0.6s' }}>
+          <span className={styles.floatIcon}>📉</span>
+          <div>
+            <p className={styles.floatVal} style={{ color: '#F43F5E' }}>₹24,397</p>
+            <p className={styles.floatLabel}>Total expenses</p>
+          </div>
+        </div>
+        <div className={styles.floatCard} style={{ bottom: '22%', left: '10%', animationDelay: '1.2s' }}>
+          <span className={styles.floatIcon}>📈</span>
+          <div>
+            <p className={styles.floatVal} style={{ color: '#10B981' }}>64.5%</p>
+            <p className={styles.floatLabel}>Savings rate</p>
+          </div>
         </div>
 
-        <h1 className={styles.title}>
-          {mode === 'login' ? 'Welcome back' : 'Create account'}
-        </h1>
-        <p className={styles.subtitle}>
-          {mode === 'login'
-            ? 'Sign in to manage your finances'
-            : 'Start tracking your money today'}
-        </p>
-
-        {/* Error */}
-        {error && (
-          <div className={styles.errorBox}>
-            <Icon name="alertTriangle" size={14} />
-            <span>{error}</span>
+        {/* Central content */}
+        <div className={styles.leftContent}>
+          <div className={styles.brandMark}>
+            <div className={styles.brandIcon}><Icon name="wallet" size={28} /></div>
+            <span className={styles.brandName}>FinTrack</span>
           </div>
-        )}
+          <h1 className={styles.headline}>
+            Your money,<br />
+            <span className={styles.headlineAccent}>fully in control.</span>
+          </h1>
+          <p className={styles.tagline}>
+            Track income, analyse spending, and hit your financial goals — all in one beautiful dashboard.
+          </p>
+          <ul className={styles.featureList}>
+            {FEATURES.map(f => (
+              <li key={f.text} className={styles.featureItem}>
+                <span className={styles.featureDot} />
+                <span>{f.icon} {f.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
-        {/* Name field — signup only */}
-        {mode === 'signup' && (
-          <div className={`${styles.formGroup} ${styles.slideDown}`}>
-            <label className={styles.label} htmlFor="auth-name">Full Name</label>
-            <input
-              id="auth-name"
-              className={styles.input}
-              type="text"
-              placeholder="e.g. Akshay Singh"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoComplete="name"
-              autoFocus
-            />
+      {/* ── Right panel ── */}
+      <div className={styles.right}>
+        <div className={styles.card}>
+
+          {/* Mode tabs */}
+          <div className={styles.tabs}>
+            <button
+              className={`${styles.tab} ${mode === 'login' ? styles.tabActive : ''}`}
+              onClick={() => switchMode('login')}
+            >
+              Sign In
+            </button>
+            <button
+              className={`${styles.tab} ${mode === 'signup' ? styles.tabActive : ''}`}
+              onClick={() => switchMode('signup')}
+            >
+              Sign Up
+            </button>
+            <div className={`${styles.tabSlider} ${mode === 'signup' ? styles.tabSliderRight : ''}`} />
           </div>
-        )}
 
-        {/* Email */}
-        <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="auth-email">Email</label>
-          <input
-            id="auth-email"
-            className={styles.input}
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoComplete="email"
-          />
-        </div>
+          <h2 className={styles.cardTitle}>
+            {mode === 'login' ? 'Welcome back 👋' : 'Join FinTrack 🚀'}
+          </h2>
+          <p className={styles.cardSub}>
+            {mode === 'login'
+              ? 'Enter your credentials to access your dashboard'
+              : 'Create your free account in seconds'}
+          </p>
 
-        {/* Password */}
-        <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="auth-password">Password</label>
-          <input
-            id="auth-password"
-            className={styles.input}
-            type="password"
-            placeholder="Minimum 6 characters"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            onKeyDown={handleKeyDown}
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-          />
-        </div>
+          {/* Error */}
+          {error && (
+            <div className={styles.errorBox}>
+              <Icon name="alertTriangle" size={13} />
+              {error}
+            </div>
+          )}
 
-        {/* Submit */}
-        <button className={styles.submitBtn} onClick={handleSubmit} disabled={loading}>
-          {loading
-            ? <span className={styles.spinner} />
-            : <Icon name={mode === 'login' ? 'check' : 'user'} size={16} />}
-          {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
-        </button>
+          {/* Name — signup only */}
+          {mode === 'signup' && (
+            <div className={`${styles.field} ${styles.slideIn}`}>
+              <label className={styles.label} htmlFor="name">Full Name</label>
+              <div className={styles.inputWrap}>
+                <span className={styles.inputIcon}><Icon name="user" size={15} /></span>
+                <input
+                  id="name"
+                  className={styles.input}
+                  type="text"
+                  placeholder="Akshay Singh"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  onKeyDown={onKey}
+                  autoFocus
+                />
+              </div>
+            </div>
+          )}
 
-        {/* Toggle */}
-        <p className={styles.toggleText}>
-          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+          {/* Email */}
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="email">Email Address</label>
+            <div className={styles.inputWrap}>
+              <span className={styles.inputIcon}><Icon name="search" size={15} /></span>
+              <input
+                id="email"
+                className={styles.input}
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={onKey}
+                autoComplete="email"
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div className={styles.field}>
+            <div className={styles.labelRow}>
+              <label className={styles.label} htmlFor="password">Password</label>
+            </div>
+            <div className={styles.inputWrap}>
+              <span className={styles.inputIcon}><Icon name="wallet" size={15} /></span>
+              <input
+                id="password"
+                className={styles.input}
+                type={showPass ? 'text' : 'password'}
+                placeholder="Minimum 6 characters"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                onKeyDown={onKey}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              />
+              <button
+                className={styles.eyeBtn}
+                type="button"
+                onClick={() => setShowPass(s => !s)}
+                aria-label={showPass ? 'Hide password' : 'Show password'}
+              >
+                {showPass ? '🙈' : '👁️'}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit */}
           <button
-            className={styles.toggleBtn}
-            onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
+            className={styles.submitBtn}
+            onClick={handleSubmit}
+            disabled={loading}
           >
-            {mode === 'login' ? 'Sign up' : 'Sign in'}
+            {loading ? (
+              <span className={styles.spinner} />
+            ) : (
+              <>
+                {mode === 'login' ? 'Sign In to Dashboard' : 'Create My Account'}
+                <span className={styles.btnArrow}>→</span>
+              </>
+            )}
           </button>
-        </p>
+
+          {/* Divider */}
+          <div className={styles.divider}><span>or</span></div>
+
+          {/* Toggle */}
+          <p className={styles.switchText}>
+            {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
+            {' '}
+            <button className={styles.switchBtn} onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}>
+              {mode === 'login' ? 'Sign up free' : 'Sign in'}
+            </button>
+          </p>
+
+        </div>
       </div>
     </div>
   )
