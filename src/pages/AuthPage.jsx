@@ -6,14 +6,16 @@ import styles from './AuthPage.module.css'
 export default function AuthPage() {
   const { login, signup } = useAuth()
 
-  const [mode, setMode]       = useState('login') // 'login' | 'signup'
-  const [email, setEmail]     = useState('')
+  const [mode, setMode]         = useState('login')
+  const [name, setName]         = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError]     = useState('')
-  const [loading, setLoading] = useState(false)
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
 
   const handleSubmit = async () => {
     if (!email || !password) { setError('Please fill in all fields'); return }
+    if (mode === 'signup' && !name.trim()) { setError('Please enter your name'); return }
     if (password.length < 6) { setError('Password must be at least 6 characters'); return }
 
     setError('')
@@ -23,17 +25,16 @@ export default function AuthPage() {
       if (mode === 'login') {
         await login(email, password)
       } else {
-        await signup(email, password)
+        await signup(email, password, name)
       }
     } catch (err) {
-      // Firebase error codes → human-readable messages
       const msgs = {
-        'auth/user-not-found':      'No account found with this email.',
-        'auth/wrong-password':      'Incorrect password.',
-        'auth/email-already-in-use':'An account with this email already exists.',
-        'auth/invalid-email':       'Please enter a valid email address.',
-        'auth/too-many-requests':   'Too many attempts. Please try again later.',
-        'auth/invalid-credential':  'Invalid email or password.',
+        'auth/user-not-found':       'No account found with this email.',
+        'auth/wrong-password':       'Incorrect password.',
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/invalid-email':        'Please enter a valid email address.',
+        'auth/too-many-requests':    'Too many attempts. Please try again later.',
+        'auth/invalid-credential':   'Invalid email or password.',
       }
       setError(msgs[err.code] || 'Something went wrong. Please try again.')
     } finally {
@@ -41,13 +42,18 @@ export default function AuthPage() {
     }
   }
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSubmit()
+  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSubmit() }
+
+  const switchMode = (newMode) => {
+    setMode(newMode)
+    setError('')
+    setName('')
+    setEmail('')
+    setPassword('')
   }
 
   return (
     <div className={styles.page}>
-      {/* Background blobs */}
       <div className={styles.blob1} aria-hidden="true" />
       <div className={styles.blob2} aria-hidden="true" />
 
@@ -77,7 +83,25 @@ export default function AuthPage() {
           </div>
         )}
 
-        {/* Fields */}
+        {/* Name field — signup only */}
+        {mode === 'signup' && (
+          <div className={`${styles.formGroup} ${styles.slideDown}`}>
+            <label className={styles.label} htmlFor="auth-name">Full Name</label>
+            <input
+              id="auth-name"
+              className={styles.input}
+              type="text"
+              placeholder="e.g. Akshay Singh"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoComplete="name"
+              autoFocus
+            />
+          </div>
+        )}
+
+        {/* Email */}
         <div className={styles.formGroup}>
           <label className={styles.label} htmlFor="auth-email">Email</label>
           <input
@@ -92,6 +116,7 @@ export default function AuthPage() {
           />
         </div>
 
+        {/* Password */}
         <div className={styles.formGroup}>
           <label className={styles.label} htmlFor="auth-password">Password</label>
           <input
@@ -107,23 +132,19 @@ export default function AuthPage() {
         </div>
 
         {/* Submit */}
-        <button
-          className={styles.submitBtn}
-          onClick={handleSubmit}
-          disabled={loading}
-        >
+        <button className={styles.submitBtn} onClick={handleSubmit} disabled={loading}>
           {loading
             ? <span className={styles.spinner} />
             : <Icon name={mode === 'login' ? 'check' : 'user'} size={16} />}
           {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
         </button>
 
-        {/* Toggle mode */}
+        {/* Toggle */}
         <p className={styles.toggleText}>
           {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
           <button
             className={styles.toggleBtn}
-            onClick={() => { setMode(m => m === 'login' ? 'signup' : 'login'); setError('') }}
+            onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
           >
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>

@@ -29,8 +29,9 @@ export default function Navbar() {
 
   // Derive display name from email
   const email      = user?.email || ''
-  const initial    = email ? email[0].toUpperCase() : 'U'
-  const username   = email ? email.split('@')[0] : 'User'
+  const displayName = user?.displayName || ''
+  const initial    = displayName ? displayName[0].toUpperCase() : email ? email[0].toUpperCase() : 'U'
+  const username   = displayName || (email ? email.split('@')[0] : 'User')
   const joinedDate = user?.metadata?.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
     : null

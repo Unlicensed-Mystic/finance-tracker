@@ -203,3 +203,13 @@
 }
 
 .toggleBtn:hover { text-decoration: underline; }
+
+/* ── Slide down animation for name field ──────── */
+.slideDown {
+  animation: slideDown 0.25s ease both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
